@@ -92,3 +92,126 @@ export const Logout = (req,res) => {
     })
 }
 //ab isko router me use karna hai
+
+// bookmarks
+export const bookmarks = async (req, res)=> {
+    try {
+        const loggedInUserId = req.body.id;
+        const tweetId = req.params.id;
+        const user = await User.findById(loggedInUserId);
+        if(user.bookmarks.includes(tweetId)){
+            //remove
+            await User.findByIdAndUpdate(loggedInUserId,{$pull:{bookmarks:tweetId}});
+            return res.status(200).json({
+                message:"Removed from bookmarks."
+            });
+        } else {
+            //bookmark
+            await User.findByIdAndUpdate(loggedInUserId,{$push:{bookmarks:tweetId}});
+            return res.status(200).json({
+                message:"Saved to bookmarks."
+            });
+        }
+    } catch (error) {
+        console.log(error);
+        
+    }
+} // isko use karna hai router me
+
+// create profile 
+export const getMyProfile = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const user = await User.findById(id).select("-password"); // select("-password")- password hidden ke liye
+        return res.status(200).json({
+            user,
+        })
+    } catch (error) {
+        console.log(error);
+        
+    }
+}
+
+// other user display ke liye
+export const getOtherUsers = async (req, res) => {
+    try {
+        const {id} = req.params;
+        const otherUsers = await User.find({_id:{$ne:id}});
+        if(!otherUsers) {
+            return res.status(401).json({
+                message:"Currently do not have any users."
+            })
+        };
+        return res.status(200).json({
+            otherUsers
+        })
+    } catch (error) {
+        console.log(error);
+        
+    }
+}
+// followers and following
+export const follow = async (req, res) => {
+    try {
+        const loggedInUserId = req.body.id;
+        const userId = req.params.id;
+
+        // Fetch the user objects from the database
+        const loggedInUser = await User.findById(loggedInUserId); // first uder
+        const user = await User.findById(userId); // second user
+
+        // Check if the logged-in user is already following the other user
+        if(!user.followers.includes(loggedInUserId)) {
+
+            // Update both users to reflect the follow action
+            await user.updateOne({$push:{followers:loggedInUserId}});
+            await loggedInUser.updateOne({$push:{following:userId}});
+        } else {
+            // If already following, send a message indicating that
+            return res.status(400).json({
+                message:`User already followed to ${user.name}`
+            })
+        };
+        return res.status(200).json({
+            message:`${loggedInUser.name} just follow to ${user.name}`,
+            success:true
+        })
+
+
+    } catch (error) {
+        console.log(error);
+        
+    }
+} 
+
+// FOLLOWING
+export const unfollow = async (req, res) => {
+    try {
+        const loggedInUserId = req.body.id;
+        const userId = req.params.id;
+
+        // Fetch the user objects from the database
+        const loggedInUser = await User.findById(loggedInUserId); // first uder
+        const user = await User.findById(userId); // second user
+
+        // Check if the logged-in user is already following the other user
+        if(!loggedInUser.following.includes(userId)) {
+
+            // Update both users to reflect the follow action
+            await user.updateOne({$pull:{followers:loggedInUserId}});
+            await loggedInUser.updateOne({$pull:{following:userId}});
+        } else {
+            // If already following, send a message indicating that
+            return res.status(400).json({
+                message:`User has not followed yet.`
+            })
+        };
+        return res.status(200).json({
+            message:`${loggedInUser.name} unfollow to ${user.name}`,
+            success:true
+        })
+    } catch (error) {
+        console.log(error);
+        
+    }
+}

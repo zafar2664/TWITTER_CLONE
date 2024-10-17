@@ -27,5 +27,9 @@ const userSchema = new mongoose.Schema({
         type:Array,
         default:[]
     },
+    bookmarks:{
+        type:Array,
+        default:[]
+    },
 }, {timestamps:true}) // kon se time pe account create kiya
 export const User = mongoose.model("User", userSchema);

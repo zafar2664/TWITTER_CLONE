@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import databaseConnection from "./config/database.js";
 import cookieParser from "cookie-parser";
 import userRoute from "./routes/userRoute.js"
+import tweetRoute from "./routes/tweetRoute.js"
 //const PORT = 8080; iske badle env file bnaayi hai
 // .env ki path define karni hai index me
 dotenv.config({
@@ -21,6 +22,7 @@ app.use(cookieParser());
 
 //create api
 app.use("/api/v1/user",userRoute);
+app.use("/api/v1/tweet", tweetRoute);
 
 app.get("/home", (req, res)=> {
     res.status(200).json({
