@@ -196,7 +196,7 @@ export const unfollow = async (req, res) => {
         const user = await User.findById(userId); // second user
 
         // Check if the logged-in user is already following the other user
-        if(!loggedInUser.following.includes(userId)) {
+        if(loggedInUser.following.includes(userId)) {
 
             // Update both users to reflect the follow action
             await user.updateOne({$pull:{followers:loggedInUserId}});

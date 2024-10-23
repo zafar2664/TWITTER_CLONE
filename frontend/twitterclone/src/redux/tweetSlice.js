@@ -18,6 +18,7 @@ const tweetSlice = createSlice({
         getIsActive:(state,action)=>{
             state.isActive = action.payload;
         }
+        
     }
 });
 export const { getAllTweets , getRefresh, getIsActive} = tweetSlice.actions; // Export the action
