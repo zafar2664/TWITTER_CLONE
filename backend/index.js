@@ -43,7 +43,8 @@ app.get("/home", (req, res)=> {
     })
 })
 
+const PORT  = process.env.PORT || 10000;
 
-app.listen(process.env.PORT, () => {
+app.listen(PORT, () => {
   console.log(`Server listen at port ${process.env.PORT}`);
 });
